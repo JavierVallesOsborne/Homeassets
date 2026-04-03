@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#D4AF37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HomAssets">
+    <meta name="description" content="HomAssets – Cuestionario de Validación / Product Survey">
+    <meta property="og:title" content="HomAssets – Cuestionario">
+    <meta property="og:description" content="Ayúdanos a construir la herramienta perfecta para gestionar tu patrimonio.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80">
+    <title>HomAssets · Survey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+        :root{
+            --dark:#070A1A;--dark-alt:#0F1428;--dark-card:#131929;
+            --gold:#D4AF37;--gold-light:#F1D57A;--gold-dark:#B8860B;
+            --cream:#FBF9F5;--cream-dim:rgba(251,249,245,0.55);
+            --gray-mid:#8896A8;--gray-border:rgba(255,255,255,0.08);
+            --safe-t:env(safe-area-inset-top,0px);
+            --safe-b:env(safe-area-inset-bottom,0px);
+            --serif:'Playfair Display',Georgia,serif;
+            --sans:'Inter',-apple-system,sans-serif;
+            --mono:'JetBrains Mono',monospace;
+            --ease:cubic-bezier(0.2,0.8,0.2,1);
+        }
+        html{scroll-behavior:smooth;height:100%;}
+        body{font-family:var(--sans);background:var(--dark);color:var(--cream);min-height:100dvh;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+        /* ── PROGRESS ─────────────────── */
+        #pw{position:sticky;top:0;z-index:50;background:rgba(7,10,26,0.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--gray-border);padding:calc(var(--safe-t) + 12px) 20px 12px;display:none;}
+        .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+        .pl{font-family:var(--serif);font-size:15px;font-weight:700;color:var(--cream);}
+        .pl span{color:var(--gold);font-style:italic;}
+        .plabel{font-size:9px;color:var(--gray-mid);font-weight:600;letter-spacing:.12em;text-transform:uppercase;}
+        .ps{display:flex;gap:4px;}
+        .p-step{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);transition:background .5s;}
+        .p-step.done{background:rgba(212,175,55,.4);}
+        .p-step.active{background:var(--gold);}
+
+        /* ── SCREENS ──────────────────── */
+        .sc{display:none;flex-direction:column;min-height:calc(100dvh - 60px);padding:28px 20px calc(28px + var(--safe-b));}
+        .sc.active{display:flex;animation:fs .38s var(--ease);}
+        @keyframes fs{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+        /* ── LANG PICKER ──────────────── */
+        #sc-lang{align-items:center;justify-content:center;text-align:center;padding-top:calc(var(--safe-t) + 48px);}
+        .lang-logo{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--cream);margin-bottom:6px;}
+        .lang-logo span{color:var(--gold);font-style:italic;}
+        .lang-tagline{font-size:12px;color:var(--gray-mid);letter-spacing:.1em;text-transform:uppercase;margin-bottom:48px;}
+        .lang-cards{display:flex;gap:14px;justify-content:center;width:100%;max-width:340px;margin:0 auto 40px;}
+        .lang-card{flex:1;background:var(--dark-card);border:1.5px solid var(--gray-border);border-radius:14px;padding:28px 16px;cursor:pointer;transition:all .25s;text-align:center;}
+        .lang-card:active,.lang-card:hover{border-color:var(--gold);background:rgba(212,175,55,.07);}
+        .lang-flag{font-size:36px;margin-bottom:10px;}
+        .lang-name{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--cream);margin-bottom:4px;}
+        .lang-sub{font-size:11px;color:var(--gray-mid);}
+
+        /* ── COVER ────────────────────── */
+        #sc-cover{align-items:center;justify-content:center;text-align:center;padding-top:calc(var(--safe-t) + 40px);}
+        .cover-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);color:var(--gold);font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:24px;}
+        .cover-badge::before{content:'●';font-size:7px;animation:pulse 2s infinite;}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .cover-title{font-family:var(--serif);font-size:clamp(32px,7vw,52px);font-weight:700;line-height:1.15;margin-bottom:16px;}
+        .cover-title .gold{color:var(--gold);font-style:italic;}
+        .cover-sub{font-size:15px;font-weight:300;color:var(--cream-dim);max-width:480px;margin:0 auto 32px;line-height:1.7;}
+        .cover-stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;}
+        .cstat{background:var(--dark-card);border:1px solid var(--gray-border);border-radius:10px;padding:12px 16px;text-align:center;min-width:80px;}
+        .cstat-num{font-family:var(--mono);font-size:20px;color:var(--gold);line-height:1;}
+        .cstat-lbl{font-size:9px;color:var(--gray-mid);margin-top:3px;letter-spacing:.06em;text-transform:uppercase;}
+
+        /* ── SECTION HEADER ───────────── */
+        .s-eye{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block;}
+        .s-head{font-family:var(--serif);font-size:clamp(24px,5vw,32px);font-weight:700;margin-bottom:8px;line-height:1.2;}
+        .s-desc{font-size:13px;color:var(--cream-dim);font-weight:300;line-height:1.7;margin-bottom:24px;}
+
+        /* ── QUESTION ─────────────────── */
+        .qb{margin-bottom:24px;}
+        .q-num{font-family:var(--mono);font-size:10px;color:var(--gold);margin-bottom:5px;display:block;letter-spacing:.05em;}
+        .q-text{font-size:15px;font-weight:500;color:var(--cream);margin-bottom:12px;line-height:1.45;}
+        .rs{color:var(--gold);}
+
+        /* ── INPUTS ───────────────────── */
+        .ti{width:100%;padding:14px 16px;background:var(--dark-card);border:1px solid var(--gray-border);border-radius:10px;color:var(--cream);font-size:16px;font-family:var(--sans);outline:none;resize:vertical;transition:border-color .2s;-webkit-appearance:none;}
+        .ti:focus{border-color:rgba(212,175,55,.5);}
+        .ti::placeholder{color:var(--gray-mid);font-weight:300;}
+        textarea.ti{min-height:90px;line-height:1.5;}
+
+        /* ── OPTION CARDS ─────────────── */
+        .og{display:flex;flex-direction:column;gap:8px;}
+        .og.c2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+        .oc{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--dark-card);border:1px solid var(--gray-border);border-radius:10px;cursor:pointer;transition:all .18s;user-select:none;-webkit-user-select:none;}
+        .oc:active{transform:scale(.98);}
+        .oc.selected{border-color:var(--gold);background:rgba(212,175,55,.08);}
+        .oi{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--gray-mid);display:flex;align-items:center;justify-content:center;transition:all .18s;}
+        .oc.multi .oi{border-radius:5px;}
+        .oc.selected .oi{border-color:var(--gold);background:var(--gold);}
+        .oi::after{content:'';opacity:0;}
+        .oc.selected.multi .oi::after{content:'✓';color:var(--dark);font-size:11px;font-weight:700;opacity:1;line-height:1;}
+        .oc.selected:not(.multi) .oi::after{content:'';width:8px;height:8px;background:var(--dark);border-radius:50%;opacity:1;display:block;}
+        .ot{font-size:14px;color:var(--cream);line-height:1.35;}.oc.selected .ot{font-weight:500;}
+
+        /* ── HIGHLIGHT BOX ────────────── */
+        .hbox{background:linear-gradient(135deg,var(--dark-alt),rgba(212,175,55,.06));border:1px solid rgba(212,175,55,.25);border-radius:12px;padding:16px;margin-bottom:14px;}
+        .hbox ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+        .hbox ul li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--cream-dim);}
+        .hbox ul li::before{content:'—';color:var(--gold);flex-shrink:0;margin-top:1px;}
+
+        /* ── BUTTONS ──────────────────── */
+        .nav-row{display:flex;gap:10px;margin-top:28px;padding-top:24px;border-top:1px solid var(--gray-border);}
+        .btn-prev{padding:14px 20px;border:1px solid var(--gray-border);background:transparent;color:var(--gray-mid);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;-webkit-appearance:none;}
+        .btn-prev:active{background:rgba(255,255,255,.04);}
+        .btn-next{flex:1;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;-webkit-appearance:none;}
+        .btn-next:active{transform:scale(.97);}
+        .btn-lang-back{background:transparent;border:none;color:var(--gray-mid);font-size:12px;cursor:pointer;padding:12px 0;text-align:center;letter-spacing:.05em;margin-top:8px;}
+
+        /* ── RESULTS ──────────────────── */
+        #sc-results{padding-top:20px;}
+        .class-banner{border-radius:14px;padding:20px 22px;margin-bottom:22px;display:flex;align-items:center;gap:16px;}
+        .class-emoji{font-size:40px;flex-shrink:0;}
+        .class-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;opacity:.7;margin-bottom:3px;}
+        .class-label{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;}
+        .class-score{font-family:var(--mono);font-size:12px;margin-top:5px;opacity:.8;}
+
+        .radar-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:22px;}
+        .radar-title{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+
+        .dims-card{background:var(--dark-card);border:1px solid var(--gray-border);border-radius:12px;padding:20px;margin-bottom:18px;}
+        .dims-title{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+        .dim-row{margin-bottom:14px;}.dim-row:last-child{margin-bottom:0;}
+        .dim-header{display:flex;justify-content:space-between;margin-bottom:5px;}
+        .dim-name{font-size:12px;font-weight:500;color:var(--cream);}
+        .dim-score{font-family:var(--mono);font-size:12px;color:var(--gold);font-weight:600;}
+        .dim-bar-bg{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;}
+        .dim-bar-fill{height:100%;border-radius:3px;width:0;transition:width 1.2s var(--ease);}
+
+        .insights-card{background:var(--dark-card);border:1px solid var(--gray-border);border-radius:12px;padding:20px;margin-bottom:18px;}
+        .insights-title{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+        .insight-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-border);font-size:12px;color:var(--cream-dim);line-height:1.5;}
+        .insight-item:last-child{border-bottom:none;padding-bottom:0;}
+        .insight-icon{flex-shrink:0;font-size:15px;}
+
+        /* ── SEND SECTION ─────────────── */
+        .send-section{background:linear-gradient(135deg,var(--dark-alt),rgba(212,175,55,.05));border:1px solid rgba(212,175,55,.3);border-radius:14px;padding:20px;margin-bottom:16px;}
+        .send-title{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--cream);margin-bottom:7px;}
+        .send-sub{font-size:12px;color:var(--cream-dim);font-weight:300;line-height:1.65;margin-bottom:18px;}
+        .send-row{display:flex;gap:10px;margin-bottom:14px;flex-direction:column;}
+        .send-btn{width:100%;padding:16px 20px;border-radius:12px;font-size:14px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;border:none;-webkit-appearance:none;}
+        .send-wa{background:#25D366;color:#fff;}
+        .send-wa:active{background:#1dbd5c;}
+        .send-email{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);}
+        .send-email:active{opacity:.88;}
+        .send-contact{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+        .send-contact span{font-size:11px;color:var(--gray-mid);}
+
+        /* Export row */
+        .exp-row{display:flex;gap:8px;margin-bottom:14px;}
+        .exp-btn{flex:1;padding:12px 10px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;border:none;-webkit-appearance:none;}
+        .exp-csv{background:var(--dark-card);border:1px solid var(--gray-border);color:var(--gold);}
+        .exp-print{background:var(--dark-card);border:1px solid var(--gray-border);color:var(--cream);}
+        .exp-copy{background:var(--dark-card);border:1px solid var(--gray-border);color:var(--cream);}
+        .exp-btn:active{opacity:.8;}
+
+        .resp-toggle{font-size:12px;color:var(--gold);cursor:pointer;text-align:center;padding:12px 0;letter-spacing:.04em;}
+        .resp-table{width:100%;border-collapse:collapse;font-size:12px;display:none;margin-top:6px;}
+        .resp-table.show{display:table;}
+        .resp-table td{padding:9px 10px;border-bottom:1px solid var(--gray-border);vertical-align:top;}
+        .resp-table td:first-child{color:var(--gray-mid);width:38%;font-weight:500;}
+        .resp-table td:last-child{color:var(--cream);}
+        .restart-btn{width:100%;padding:14px;background:transparent;border:1px solid var(--gray-border);color:var(--gray-mid);border-radius:10px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:8px;-webkit-appearance:none;}
+        .restart-btn:active{border-color:rgba(212,175,55,.3);}
+
+        /* ── TOAST ────────────────────── */
+        #toast{position:fixed;bottom:calc(28px + var(--safe-b));left:50%;transform:translateX(-50%) translateY(16px);background:rgba(7,10,26,.95);border:1px solid rgba(212,175,55,.35);color:var(--gold);font-size:13px;font-weight:500;padding:12px 22px;border-radius:40px;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+        #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+        #toast.err{border-color:rgba(239,68,68,.35);color:#FCA5A5;}
+
+        /* ── ADMIN ────────────────────── */
+        #adminPanel{display:none;position:fixed;inset:0;z-index:200;background:rgba(3,4,14,.94);backdrop-filter:blur(14px);overflow-y:auto;padding:calc(var(--safe-t)+24px) 20px 40px;}
+        #adminPanel.show{display:block;}
+        .adm-inner{max-width:500px;margin:0 auto;}
+        .adm-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+        .adm-title{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--gold);}
+        .adm-close{background:rgba(255,255,255,.08);border:1px solid var(--gray-border);color:var(--cream);width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .adm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+        .adm-stat{background:var(--dark-card);border:1px solid var(--gray-border);border-radius:10px;padding:14px;text-align:center;}
+        .adm-num{font-family:var(--mono);font-size:22px;color:var(--gold);}
+        .adm-lbl{font-size:9px;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+        .adm-dist{background:var(--dark-card);border:1px solid var(--gray-border);border-radius:10px;padding:18px;margin-bottom:14px;}
+        .adm-dist-title{font-size:9px;font-weight:700;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;}
+        .adm-dr{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px;}
+        .adm-dl{width:110px;color:var(--cream-dim);font-size:11px;}
+        .adm-dbw{flex:1;background:rgba(255,255,255,.06);border-radius:3px;height:7px;overflow:hidden;}
+        .adm-db{height:100%;border-radius:3px;transition:width .8s var(--ease);}
+        .adm-dc{width:24px;text-align:right;color:var(--gray-mid);font-family:var(--mono);font-size:11px;}
+        .adm-btns{display:flex;gap:8px;flex-direction:column;}
+        .adm-btn{width:100%;padding:14px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;}
+        .adm-dl-btn{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);}
+        .adm-clr{background:transparent;border:1px solid rgba(239,68,68,.3);color:#EF4444;}
+
+        @media(min-width:640px){
+            .send-row{flex-direction:row;}
+            .send-btn{width:auto;flex:1;}
+            .lang-card{padding:32px 20px;}
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── PROGRESS ──── -->
+<div id="pw">
+    <div class="ph">
+        <span class="pl" id="logo-tap">HOM<span>ASSETS</span></span>
+        <span class="plabel" id="plabel">1/7</span>
+    </div>
+    <div class="ps" id="ps">
+        <div class="p-step active" id="ps1"></div><div class="p-step" id="ps2"></div>
+        <div class="p-step" id="ps3"></div><div class="p-step" id="ps4"></div>
+        <div class="p-step" id="ps5"></div><div class="p-step" id="ps6"></div>
+        <div class="p-step" id="ps7"></div>
+    </div>
+</div>
+
+<!-- ── LANG PICKER ── -->
+<div id="sc-lang" class="sc active">
+    <div class="lang-logo">HOM<span>ASSETS</span></div>
+    <div class="lang-tagline">Select your language / Elige tu idioma</div>
+    <div class="lang-cards">
+        <div class="lang-card" onclick="setLang('es')">
+            <div class="lang-flag">🇪🇸</div>
+            <div class="lang-name">Español</div>
+            <div class="lang-sub">Versión en español</div>
+        </div>
+        <div class="lang-card" onclick="setLang('en')">
+            <div class="lang-flag">🇬🇧</div>
+            <div class="lang-name">English</div>
+            <div class="lang-sub">English version</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── COVER ──── -->
+<div id="sc-cover" class="sc">
+    <div class="cover-badge" id="c-badge"></div>
+    <h1 class="cover-title" id="c-title"></h1>
+    <p class="cover-sub" id="c-sub"></p>
+    <div class="cover-stats">
+        <div class="cstat"><div class="cstat-num">7</div><div class="cstat-lbl" id="c-sl"></div></div>
+        <div class="cstat"><div class="cstat-num">21</div><div class="cstat-lbl" id="c-ql"></div></div>
+        <div class="cstat"><div class="cstat-num">~10</div><div class="cstat-lbl" id="c-ml"></div></div>
+    </div>
+    <button class="btn-next" style="max-width:300px;margin:0 auto;" onclick="goTo(1)" id="c-start"></button>
+    <button class="btn-lang-back" onclick="backToLang()" id="c-back"></button>
+</div>
+
+<!-- ── S1 ──── -->
+<div id="sc-1" class="sc">
+    <span class="s-eye" id="s1-eye"></span><h2 class="s-head" id="s1-head"></h2><p class="s-desc" id="s1-desc"></p>
+    <div class="qb"><span class="q-num" id="s1-q1n"></span><div class="q-text" id="s1-q1t"></div><input type="number" class="ti" id="q1" inputmode="numeric"></div>
+    <div class="qb"><span class="q-num" id="s1-q2n"></span><div class="q-text" id="s1-q2t"></div><input type="text" class="ti" id="q2" autocomplete="off"></div>
+    <div class="qb"><span class="q-num" id="s1-q3n"></span><div class="q-text" id="s1-q3t"></div><input type="text" class="ti" id="q3" autocomplete="off"></div>
+    <div class="qb">
+        <span class="q-num" id="s1-q4n"></span><div class="q-text" id="s1-q4t"></div>
+        <div class="og c2" id="q4-opts"></div>
+    </div>
+    <div class="nav-row"><button class="btn-next" onclick="next(1,2,['q1','q4'])" id="btn-s1"></button></div>
+</div>
+
+<!-- ── S2 ──── -->
+<div id="sc-2" class="sc">
+    <span class="s-eye" id="s2-eye"></span><h2 class="s-head" id="s2-head"></h2><p class="s-desc" id="s2-desc"></p>
+    <div class="qb"><span class="q-num" id="s2-q5n"></span><div class="q-text" id="s2-q5t"></div><div class="og c2" id="q5-opts"></div></div>
+    <div class="qb"><span class="q-num" id="s2-q6n"></span><div class="q-text" id="s2-q6t"></div><div class="og" id="q6-opts"></div></div>
+    <div class="qb"><span class="q-num" id="s2-q7n"></span><div class="q-text" id="s2-q7t"></div><div class="og" id="q7-opts"></div></div>
+    <div class="nav-row"><button class="btn-prev" onclick="goTo(1)" id="btn-s2p"></button><button class="btn-next" onclick="next(2,3,['q6'])" id="btn-s2n"></button></div>
+</div>
+
+<!-- ── S3 ──── -->
+<div id="sc-3" class="sc">
+    <span class="s-eye" id="s3-eye"></span><h2 class="s-head" id="s3-head"></h2><p class="s-desc" id="s3-desc"></p>
+    <div class="qb"><span class="q-num" id="s3-q8n"></span><div class="q-text" id="s3-q8t"></div><textarea class="ti" id="q8" rows="3"></textarea></div>
+    <div class="qb"><span class="q-num" id="s3-q9n"></span><div class="q-text" id="s3-q9t"></div><textarea class="ti" id="q9" rows="3"></textarea></div>
+    <div class="qb"><span class="q-num" id="s3-q10n"></span><div class="q-text" id="s3-q10t"></div><textarea class="ti" id="q10" rows="3"></textarea></div>
+    <div class="qb"><span class="q-num" id="s3-q11n"></span><div class="q-text" id="s3-q11t"></div><div class="og" id="q11-opts"></div></div>
+    <div class="nav-row"><button class="btn-prev" onclick="goTo(2)" id="btn-s3p"></button><button class="btn-next" onclick="next(3,4,[])" id="btn-s3n"></button></div>
+</div>
+
+<!-- ── S4 ──── -->
+<div id="sc-4" class="sc">
+    <span class="s-eye" id="s4-eye"></span><h2 class="s-head" id="s4-head"></h2><p class="s-desc" id="s4-desc"></p>
+    <div class="qb"><span class="q-num" id="s4-q12n"></span><div class="q-text" id="s4-q12t"></div><div class="hbox" id="s4-hbox"></div><div class="og" id="q12-opts"></div></div>
+    <div class="qb"><span class="q-num" id="s4-q13n"></span><div class="q-text" id="s4-q13t"></div><textarea class="ti" id="q13" rows="3"></textarea></div>
+    <div class="qb"><span class="q-num" id="s4-q14n"></span><div class="q-text" id="s4-q14t"></div><textarea class="ti" id="q14" rows="3"></textarea></div>
+    <div class="nav-row"><button class="btn-prev" onclick="goTo(3)" id="btn-s4p"></button><button class="btn-next" onclick="next(4,5,['q12'])" id="btn-s4n"></button></div>
+</div>
+
+<!-- ── S5 ──── -->
+<div id="sc-5" class="sc">
+    <span class="s-eye" id="s5-eye"></span><h2 class="s-head" id="s5-head"></h2><p class="s-desc" id="s5-desc"></p>
+    <div class="qb"><span class="q-num" id="s5-q15n"></span><div class="q-text" id="s5-q15t"></div><div class="og c2" id="q15-opts"></div></div>
+    <div class="qb"><span class="q-num" id="s5-q16n"></span><div class="q-text" id="s5-q16t"></div><div class="og" id="q16-opts"></div></div>
+    <div class="qb"><span class="q-num" id="s5-q17n"></span><div class="q-text" id="s5-q17t"></div><div class="og c2" id="q17-opts"></div></div>
+    <div class="nav-row"><button class="btn-prev" onclick="goTo(4)" id="btn-s5p"></button><button class="btn-next" onclick="next(5,6,['q15'])" id="btn-s5n"></button></div>
+</div>
+
+<!-- ── S6 ──── -->
+<div id="sc-6" class="sc">
+    <span class="s-eye" id="s6-eye"></span><h2 class="s-head" id="s6-head"></h2><p class="s-desc" id="s6-desc"></p>
+    <div class="qb"><span class="q-num" id="s6-q18n"></span><div class="q-text" id="s6-q18t"></div><div class="og" id="q18-opts"></div></div>
+    <div class="qb"><span class="q-num" id="s6-q19n"></span><div class="q-text" id="s6-q19t"></div><div class="og" id="q19-opts"></div></div>
+    <div class="qb"><span class="q-num" id="s6-q20n"></span><div class="q-text" id="s6-q20t"></div><div class="og" id="q20-opts"></div></div>
+    <div class="nav-row"><button class="btn-prev" onclick="goTo(5)" id="btn-s6p"></button><button class="btn-next" onclick="next(6,7,[])" id="btn-s6n"></button></div>
+</div>
+
+<!-- ── S7 ──── -->
+<div id="sc-7" class="sc">
+    <span class="s-eye" id="s7-eye"></span><h2 class="s-head" id="s7-head"></h2><p class="s-desc" id="s7-desc"></p>
+    <div class="qb"><span class="q-num" id="s7-q21n"></span><div class="q-text" id="s7-q21t"></div><textarea class="ti" id="q21" rows="7" style="min-height:130px;"></textarea></div>
+    <div class="nav-row"><button class="btn-prev" onclick="goTo(6)" id="btn-s7p"></button><button class="btn-next" onclick="finalize()" id="btn-s7n"></button></div>
+</div>
+
+<!-- ── RESULTS ──── -->
+<div id="sc-results" class="sc">
+    <span class="s-eye" id="res-eye"></span>
+    <h2 class="s-head" id="res-head" style="margin-bottom:20px;"></h2>
+    <div class="class-banner" id="classBanner"><div class="class-emoji" id="classEmoji"></div><div><div class="class-eyebrow" id="classEyebrow"></div><div class="class-label" id="classLabel"></div><div class="class-score" id="classScore"></div></div></div>
+    <div class="radar-wrap"><div class="radar-title" id="radar-title"></div><div id="radarChart"></div></div>
+    <div class="dims-card">
+        <div class="dims-title" id="dims-title"></div>
+        <div class="dim-row"><div class="dim-header"><span class="dim-name" id="dn-icp"></span><span class="dim-score" id="ds-icp">0/10</span></div><div class="dim-bar-bg"><div class="dim-bar-fill" id="db-icp"></div></div></div>
+        <div class="dim-row"><div class="dim-header"><span class="dim-name" id="dn-pain"></span><span class="dim-score" id="ds-pain">0/10</span></div><div class="dim-bar-bg"><div class="dim-bar-fill" id="db-pain"></div></div></div>
+        <div class="dim-row"><div class="dim-header"><span class="dim-name" id="dn-fit"></span><span class="dim-score" id="ds-fit">0/10</span></div><div class="dim-bar-bg"><div class="dim-bar-fill" id="db-fit"></div></div></div>
+        <div class="dim-row"><div class="dim-header"><span class="dim-name" id="dn-com"></span><span class="dim-score" id="ds-com">0/10</span></div><div class="dim-bar-bg"><div class="dim-bar-fill" id="db-com"></div></div></div>
+        <div class="dim-row"><div class="dim-header"><span class="dim-name" id="dn-open"></span><span class="dim-score" id="ds-open">0/10</span></div><div class="dim-bar-bg"><div class="dim-bar-fill" id="db-open"></div></div></div>
+    </div>
+    <div class="insights-card"><div class="insights-title" id="ins-title"></div><div id="insightsList"></div></div>
+
+    <!-- SEND -->
+    <div class="send-section">
+        <div class="send-title" id="send-title"></div>
+        <p class="send-sub" id="send-sub"></p>
+        <div class="send-row">
+            <button class="send-btn send-wa" onclick="sendWhatsApp()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.968-1.301A9.956 9.956 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.72 0-3.328-.464-4.713-1.273l-.337-.2-3.484.912.932-3.395-.219-.348A7.956 7.956 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+                <span id="send-wa-label"></span>
+            </button>
+            <button class="send-btn send-email" onclick="sendEmail()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span id="send-email-label"></span>
+            </button>
+        </div>
+        <div class="send-contact"><span>📱 +34 669 446 459</span><span>✉️ jvallesosborne@gmail.com</span></div>
+    </div>
+
+    <div class="exp-row">
+        <button class="exp-btn exp-csv" onclick="downloadCSV()">⬇ CSV</button>
+        <button class="exp-btn exp-copy" onclick="copyText()" id="btn-copy"></button>
+        <button class="exp-btn exp-print" onclick="window.print()">🖨️</button>
+    </div>
+    <div class="resp-toggle" onclick="toggleResp()" id="resp-toggle-btn"></div>
+    <table class="resp-table" id="respTable"></table>
+    <button class="restart-btn" onclick="restart()" id="restart-btn"></button>
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel">
+    <div class="adm-inner">
+        <div class="adm-hdr"><div class="adm-title">Admin</div><button class="adm-close" onclick="closeAdmin()">✕</button></div>
+        <div class="adm-stats" id="adm-stats"></div>
+        <div class="adm-dist" id="adm-dist"></div>
+        <div class="adm-btns">
+            <button class="adm-btn adm-dl-btn" onclick="dlAll()">⬇ Download All CSV</button>
+            <button class="adm-btn adm-clr" onclick="clearAll()">🗑 Clear data</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   STATE & I18N
+   ═══════════════════════════════════════ */
+let lang = 'es';
+const A = {};
+const SK = 'ha_mobile_v1';
+
+const T = {
+  es: {
+    badge:'Validación de Producto · Confidencial', title:'Cuestionario de\nPatrimonio Digital', titleGold:'Patrimonio Digital',
+    sub:'Ayúdanos a construir la herramienta perfecta. Tus respuestas son 100% confidenciales.',
+    sl:'Secciones', ql:'Preguntas', ml:'Minutos', start:'Comenzar →', back:'← Cambiar idioma',
+    s1:{eye:'Sección 1 de 7',head:'👤 Perfil',desc:'Cuéntanos sobre ti para contextualizar tus respuestas.',
+        q1n:'01/21',q1t:'¿Cuál es tu edad? *',q1p:'Ej: 42',
+        q2n:'02/21',q2t:'¿A qué te dedicas profesionalmente?',q2p:'Ej: Empresario, Abogado...',
+        q3n:'03/21',q3t:'¿En qué país resides?',q3p:'Ej: España, México...',
+        q4n:'04/21',q4t:'¿Tu nivel de patrimonio? *',
+        q4o:['Bajo','Medio','Alto','Muy alto']},
+    s2:{eye:'Sección 2 de 7',head:'🏛️ Tus Activos',desc:'¿Qué tienes y cómo lo gestionas?',
+        q5n:'05/21',q5t:'¿Qué activos posees? (varios)',q5o:['🎨 Arte','💎 Joyas','🥈 Plata / objetos','🏆 Coleccionismo','🏠 Inmuebles','📦 Otros'],
+        q6n:'06/21',q6t:'¿Tienes inventario de tus bienes? *',q6o:['Sí, completo','Parcial','No'],
+        q7n:'07/21',q7t:'¿Dónde guardas esa info? (varios)',q7o:['📊 Excel','📄 Docs físicos','🧠 Memoria','📱 Apps digitales','❌ No tengo registro']},
+    s3:{eye:'Sección 3 de 7',head:'⚠️ Problemas',desc:'La sección más crítica. Sé lo más específico posible.',
+        q8n:'08/21',q8t:'¿Qué dificultades tienes para gestionar tus bienes?',q8p:'Cuéntanos tu día a día...',
+        q9n:'09/21',q9t:'¿Te preocupa no tener control de tu patrimonio? ¿Por qué?',q9p:'Sé tan específico como quieras...',
+        q10n:'10/21',q10t:'¿Qué pasaría si necesitaras demostrar propiedad o valor mañana?',q10p:'Describe el escenario...',
+        q11n:'11/21',q11t:'¿Has tenido alguno de estos problemas? (varios)',q11o:['Pérdida de información','Dificultad para valorar activos','Problemas con seguros','Conflictos herencias','Falta de tiempo','Ninguno']},
+    s4:{eye:'Sección 4 de 7',head:'💡 Validación',desc:'¿La solución que construimos resuelve tu problema?',
+        q12n:'12/21',q12t:'Si existiera una plataforma que te permitiera... *',
+        hbox:['Inventariar todos tus activos','Obtener valoraciones automáticas con IA','Documentación segura y certificada','Prepararte para seguros, herencias o ventas'],
+        q12label:'¿La usarías?',q12o:['✅ Sí','❌ No','🤔 Depende'],
+        q13n:'13/21',q13t:'¿Qué funcionalidad te parecería más valiosa?',q13p:'La que más te ayudaría...',
+        q14n:'14/21',q14t:'¿Qué te generaría desconfianza?',q14p:'Sé honesto...',},
+    s5:{eye:'Sección 5 de 7',head:'💰 Precio',desc:'¿Qué modelo tiene sentido para ti?',
+        q15n:'15/21',q15t:'¿Estarías dispuesto a pagar? *',q15o:['Sí','No'],
+        q16n:'16/21',q16t:'¿Qué modelo preferirías?',q16o:['🔄 Suscripción mensual','💳 Pago único','🆓 Freemium'],
+        q17n:'17/21',q17t:'¿Cuánto pagarías al mes?',q17o:['5–10€','10–25€','25–50€','+50€']},
+    s6:{eye:'Sección 6 de 7',head:'🔐 Confianza',desc:'La confianza es fundamental en nuestro proyecto.',
+        q18n:'18/21',q18t:'¿Te preocuparía subir info de tus bienes online?',q18o:['Sí, mucho','Algo — dependería del servicio','No especialmente','No, para nada'],
+        q19n:'19/21',q19t:'¿Qué necesitarías para confiar? (varios)',q19o:['🔒 Encriptación','🏅 Marca reconocida','💬 Recomendaciones','🎛️ Control total de datos','📌 Otros'],
+        q20n:'20/21',q20t:'¿Preferirías...?',q20o:['🙋 Self-service','👨‍💼 Que un experto lo haga','🤝 Modelo híbrido']},
+    s7:{eye:'Sección 7 de 7 · Última',head:'✍️ Pregunta Abierta',desc:'La más valiosa. Tu respuesta libre nos da contexto único.',
+        q21n:'21/21',q21t:'Si pudieras diseñar la herramienta perfecta, ¿cómo sería?',q21p:'Descríbela con detalle. ¿Qué problema resuelve? ¿Cómo la usarías? No hay respuesta incorrecta.'},
+    btn:{next:'Siguiente →',prev:'← Atrás',submit:'Enviar y Ver Resultados ✓'},
+    res:{eye:'Análisis Completado',head:'Perfil del Respondente',eyebrow:'Clasificación',radarTitle:'Mapa 5 Dimensiones',dimsTitle:'Puntuación (0–10)',
+         dn:{icp:'🏆 ICP Fit',pain:'🔥 Nivel de Dolor',fit:'💡 Fit de Solución',com:'💰 Potencial Comercial',open:'🔓 Apertura / Confianza'},
+         insTitle:'Insights Clave',
+         sendTitle:'Enviar al equipo de HomAssets',sendSub:'Comparte tus respuestas directamente con nosotros.',
+         sendWa:'Enviar por WhatsApp',sendEmail:'Enviar por Email',
+         copy:'📋 Copiar',restart:'↺ Nuevo cuestionario',respToggle:'▸ Ver todas las respuestas',respHide:'▾ Ocultar'},
+    cls:{ideal:{label:'Cliente Ideal',emoji:'⭐',desc:'Puntuación '},hot:{label:'Lead Caliente',emoji:'🔥',desc:'Puntuación '},warm:{label:'Lead Templado',emoji:'🌡️',desc:'Puntuación '},cold:{label:'Lead Frío',emoji:'❄️',desc:'Puntuación '}},
+    ins:{pain8:'Nivel de dolor muy alto — sin inventario organizado',
+         useYes:'Adoptaría la solución de forma inmediata',useNo:'No adoptaría — investigar barreras en P.14',
+         pay:'Dispuesto a pagar por el servicio',highLTV:'Alto potencial LTV — presupuesto mensual elevado',
+         highWealth:'Perfil patrimonial alto — candidato a plan Premium',
+         inherit:'Ha experimentado conflictos de herencia — pain point real validado',
+         insurance:'Ha tenido problemas con seguros — oportunidad de venta cruzada',
+         privacy:'Alta barrera de privacidad — requiere trabajo de confianza previo',
+         expert:'Prefiere servicio gestionado — upsell a plan concierge',
+         art:'Posee arte o joyería — activos de alta valoración',noInventory:'Sin inventario actual — alta dependencia del producto'},
+    err:'Por favor responde las preguntas obligatorias (*)',
+    toastWa:'✓ Abriendo WhatsApp...',toastEmail:'✓ Abriendo email...',toastCopy:'✓ Copiado al portapapeles',toastCSV:'✓ CSV descargado',
+    scoreLabel:'Score',progLabel:'Sección',of:'de',
+    qlabels:{q1:'Edad',q2:'Profesión',q3:'País',q4:'Nivel patrimonio',q5:'Tipos de activos',q6:'Inventario actual',q7:'Dónde guarda info',q8:'Dificultades gestión',q9:'Preocupación patrimonio',q10:'Escenario urgente',q11:'Problemas experimentados',q12:'Usaría la plataforma',q13:'Funcionalidad valiosa',q14:'Fuente de desconfianza',q15:'Pagaría',q16:'Modelo preferido',q17:'Precio mensual',q18:'Privacidad',q19:'Requisitos confianza',q20:'Modo preferido',q21:'Herramienta ideal'},
+  },
+  en: {
+    badge:'Product Validation · Confidential',title:'Asset Management\nSurvey',titleGold:'Survey',
+    sub:'Help us build the perfect tool to manage and protect your valuables. All answers are 100% confidential.',
+    sl:'Sections',ql:'Questions',ml:'Minutes',start:'Start →',back:'← Change language',
+    s1:{eye:'Section 1 of 7',head:'👤 About You',desc:'A few quick questions to help us understand your background.',
+        q1n:'01/21',q1t:'What is your age? *',q1p:'e.g. 42',
+        q2n:'02/21',q2t:'What is your profession?',q2p:'e.g. Business owner, Solicitor...',
+        q3n:'03/21',q3t:'Which country do you live in?',q3p:'e.g. United Kingdom, United States...',
+        q4n:'04/21',q4t:'How would you describe your overall level of wealth? *',
+        q4o:['Modest','Comfortable','High','Very high']},
+    s2:{eye:'Section 2 of 7',head:'🏛️ Your Assets',desc:'Tell us what you own and how you keep track of it.',
+        q5n:'05/21',q5t:'What type of assets do you own? (select all)',q5o:['🎨 Art','💎 Jewellery','🥈 Silver / plate','🏆 Collectibles','🏠 Property','📦 Other'],
+        q6n:'06/21',q6t:'Do you have a detailed inventory of your assets? *',q6o:['Yes, comprehensive','Partially','No'],
+        q7n:'07/21',q7t:'Where do you store that information? (select all)',q7o:['📊 Spreadsheet','📄 Physical documents','🧠 Memory','📱 Digital app','❌ I don\'t track it']},
+    s3:{eye:'Section 3 of 7',head:'⚠️ Pain Points',desc:'The most valuable section. Please be as candid as possible.',
+        q8n:'08/21',q8t:'What challenges do you face managing your assets?',q8p:'Tell us about your day-to-day frustrations...',
+        q9n:'09/21',q9t:'Are you concerned about not having clear oversight? Why?',q9p:'Be as specific as you like...',
+        q10n:'10/21',q10t:'What would happen if you needed to prove ownership or value tomorrow?',q10p:'Walk us through the scenario honestly...',
+        q11n:'11/21',q11t:'Have you experienced any of the following? (select all)',q11o:['Lost or misplaced records','Difficulty valuing an asset','Insurance complications','Family / inheritance disputes','Simply never had time','None of the above']},
+    s4:{eye:'Section 4 of 7',head:'💡 Solution Fit',desc:'Does what we\'re building genuinely solve a real problem for you?',
+        q12n:'12/21',q12t:'If a platform existed that allowed you to… *',
+        hbox:['Build a complete digital inventory','Get automatic AI-powered valuations','Generate legally recognised documentation','Prepare for insurance, estate planning or sale'],
+        q12label:'Would you use it?',q12o:['✅ Yes, definitely','❌ No','🤔 It depends'],
+        q13n:'13/21',q13t:'Which feature would be most valuable to you?',q13p:'The one thing that would make it indispensable...',
+        q14n:'14/21',q14t:'What would make you distrust a service like this?',q14p:'Be completely honest...',},
+    s5:{eye:'Section 5 of 7',head:'💰 Pricing',desc:'Help us understand what pricing model would work for you.',
+        q15n:'15/21',q15t:'Would you be willing to pay for this service? *',q15o:['Yes','No'],
+        q16n:'16/21',q16t:'Which pricing model would you prefer?',q16o:['🔄 Monthly subscription','💳 One-time payment','🆓 Freemium'],
+        q17n:'17/21',q17t:'How much would you pay per month?',q17o:['£5–10','£10–25','£25–50','£50+']},
+    s6:{eye:'Section 6 of 7',head:'🔐 Trust & Privacy',desc:'Trust is at the heart of our product. We need to understand your barriers.',
+        q18n:'18/21',q18t:'Would you be concerned about uploading your asset details online?',q18o:['Yes, very concerned','Somewhat — depends on the platform','Not particularly','Not at all'],
+        q19n:'19/21',q19t:'What would you need to fully trust this service? (select all)',q19o:['🔒 Encryption','🏅 Trusted brand / reputation','💬 Recommendations','🎛️ Full data control','📌 Other'],
+        q20n:'20/21',q20t:'How would you prefer to use this service?',q20o:['🙋 Self-service','👨‍💼 Expert-led','🤝 Hybrid']},
+    s7:{eye:'Section 7 of 7 · Final',head:'✍️ Your Vision',desc:'The most valuable question. Your open answer gives us context no multiple-choice ever could.',
+        q21n:'21/21',q21t:'If you could design the perfect tool to manage your assets, what would it look like?',q21p:'Describe it in as much detail as you like. No wrong answers.'},
+    btn:{next:'Next →',prev:'← Back',submit:'Submit & View Results ✓'},
+    res:{eye:'Analysis Complete',head:'Respondent Profile',eyebrow:'Classification',radarTitle:'5-Dimension Map',dimsTitle:'Score by Dimension (0–10)',
+         dn:{icp:'🏆 ICP Fit',pain:'🔥 Pain Level',fit:'💡 Solution Fit',com:'💰 Commercial Potential',open:'🔓 Trust Openness'},
+         insTitle:'Key Insights',
+         sendTitle:'Send results to the HomAssets team',sendSub:'Share your answers with us so we can get back to you with personalised information.',
+         sendWa:'Send via WhatsApp',sendEmail:'Send by Email',
+         copy:'📋 Copy',restart:'↺ New survey',respToggle:'▸ View all responses',respHide:'▾ Hide'},
+    cls:{ideal:{label:'Ideal Customer',emoji:'⭐',desc:'Total score '},hot:{label:'Hot Lead',emoji:'🔥',desc:'Total score '},warm:{label:'Warm Lead',emoji:'🌡️',desc:'Total score '},cold:{label:'Cold Lead',emoji:'❄️',desc:'Total score '}},
+    ins:{pain8:'Very high pain level — no organised inventory exists',
+         useYes:'Would adopt the solution immediately',useNo:'Would not adopt — investigate barriers from Q14',
+         pay:'Willing to pay for the service',highLTV:'High LTV potential — elevated monthly budget',
+         highWealth:'High wealth profile — candidate for Premium plan',
+         inherit:'Has experienced inheritance disputes — validated real pain point',
+         insurance:'Had insurance problems — cross-sell opportunity',
+         privacy:'High privacy barrier — trust-building work required before sale',
+         expert:'Prefers managed service — upsell to concierge plan',
+         art:'Owns art or jewellery — high-value assets with active market',noInventory:'No current inventory — starts from zero, high product dependency'},
+    err:'Please answer the required questions (*)',
+    toastWa:'✓ Opening WhatsApp...',toastEmail:'✓ Opening email...',toastCopy:'✓ Copied to clipboard',toastCSV:'✓ CSV downloaded',
+    scoreLabel:'Score',progLabel:'Section',of:'of',
+    qlabels:{q1:'Age',q2:'Profession',q3:'Country',q4:'Wealth level',q5:'Asset types',q6:'Current inventory',q7:'Stores info where',q8:'Management challenges',q9:'Oversight concerns',q10:'Proof scenario',q11:'Problems experienced',q12:'Would use platform',q13:'Most valuable feature',q14:'Trust concerns',q15:'Willing to pay',q16:'Pricing model',q17:'Monthly budget',q18:'Privacy concern',q19:'Trust requirements',q20:'Preferred mode',q21:'Ideal tool'},
+  }
+};
+const t = () => T[lang];
+
+/* ═══════════════════════════════════════
+   SCORING
+   ═══════════════════════════════════════ */
+function score() {
+    const s = {};
+    const icpMap = { Bajo:0, Medio:2, Alto:6, 'Muy alto':10, Modest:0, Comfortable:2, High:6, 'Very high':10 };
+    const hv = lang==='es' ? ['🎨 Arte','💎 Joyas','🥈 Plata / objetos'] : ['🎨 Art','💎 Jewellery','🥈 Silver / plate'];
+    s.icp = Math.min(10, (icpMap[A.q4]??0) + ((A.q5||[]).some(v=>hv.some(h=>v.includes(h.slice(3))||h.includes(v)))?2:0));
+    const invMap = {No:10, Parcial:6,'Sí, completo':2, Partially:6,'Yes, comprehensive':2};
+    const painBase = invMap[A.q6] ?? 5;
+    const pw = {'Pérdida de información':1,'Dificultad para valorar activos':1,'Problemas con seguros':1,'Conflictos herencias':1,'Lost or misplaced records':1,'Difficulty valuing an asset':1,'Insurance complications':1,'Family / inheritance disputes':1,'Falta de tiempo':0.5,'Simply never had time':0.5};
+    s.pain = Math.min(10, Math.round(painBase + (A.q11||[]).reduce((acc,p)=>acc+(pw[p]??0),0)));
+    const useMap = {'✅ Sí':10,'✅ Yes, definitely':10,'🤔 Depende':5,'🤔 It depends':5,'❌ No':0,'❌ No':0};
+    s.fit = useMap[A.q12] ?? 0;
+    const payMap = {Sí:5,Yes:5,No:0};
+    const priceMap = {'5–10€':1,'10–25€':3,'25–50€':6,'+50€':9,'£5–10':1,'£10–25':3,'£25–50':6,'£50+':9};
+    s.com = Math.min(10, (payMap[A.q15]??0) + Math.round((priceMap[A.q17]??0)*0.555));
+    const privMap = {'Sí, mucho':2,'Yes, very concerned':2,'Algo — dependería del servicio':5,'Somewhat — depends on the platform':5,'No especialmente':8,'Not particularly':8,'No, para nada':10,'Not at all':10};
+    const modeMap = {'🙋 Self-service':4,'🤝 Modelo híbrido':7,'🤝 Hybrid':7,'👨‍💼 Que un experto lo haga':10,'👨‍💼 Expert-led':10};
+    s.open = Math.round(((privMap[A.q18]??5)+(modeMap[A.q20]??5))/2);
+    s.total = s.icp + s.pain + s.fit + s.com + s.open;
+    s.cls = s.total>=43?'ideal':s.total>=31?'hot':s.total>=16?'warm':'cold';
+    return s;
+}
+
+const COLORS = { ideal:'#D4AF37', hot:'#F97316', warm:'#3B82F6', cold:'#8896A8' };
+const BGCOLS = { ideal:'rgba(212,175,55,0.12)', hot:'rgba(249,115,22,0.1)', warm:'rgba(59,130,246,0.1)', cold:'rgba(136,150,168,0.1)' };
+
+function insights(s) {
+    const i = t().ins;
+    const res = [];
+    if (s.pain>=8) res.push({icon:'🔴',txt:i.pain8});
+    const uv = (A.q12||'');
+    if (uv.includes('Sí')||uv.includes('Yes')) res.push({icon:'✅',txt:i.useYes});
+    if (uv.includes('No')&&!uv.includes('depends')&&!uv.includes('Depende')) res.push({icon:'🚫',txt:i.useNo});
+    if (A.q15==='Sí'||A.q15==='Yes') res.push({icon:'💰',txt:i.pay});
+    if (['+50€','£50+','25–50€','£25–50'].includes(A.q17)) res.push({icon:'💎',txt:i.highLTV});
+    if (['Muy alto','Alto','Very high','High'].includes(A.q4)) res.push({icon:'🏆',txt:i.highWealth});
+    const q11 = A.q11||[];
+    if (q11.some(v=>v.includes('herencia')||v.includes('inheritance'))) res.push({icon:'⚖️',txt:i.inherit});
+    if (q11.some(v=>v.includes('seguros')||v.includes('Insurance'))) res.push({icon:'🛡️',txt:i.insurance});
+    if ((A.q18||'').includes('mucho')||(A.q18||'').includes('very')) res.push({icon:'⚠️',txt:i.privacy});
+    if ((A.q20||'').includes('experto')||(A.q20||'').includes('Expert')) res.push({icon:'👨‍💼',txt:i.expert});
+    if ((A.q5||[]).some(v=>v.includes('Arte')||v.includes('Art')||v.includes('Joyas')||v.includes('Jewellery'))) res.push({icon:'🎨',txt:i.art});
+    if (A.q6==='No') res.push({icon:'📭',txt:i.noInventory});
+    return res.slice(0,6);
+}
+
+/* ═══════════════════════════════════════
+   RADAR
+   ═══════════════════════════════════════ */
+function buildRadar(s, color) {
+    const cx=150,cy=150,maxR=90,angles=[-90,-18,54,126,198],dims=['icp','pain','fit','com','open'];
+    const l = t().res.dn;
+    const labels=[l.icp.slice(3),l.pain.slice(3),l.fit.slice(3),l.com.slice(3),l.open.slice(3)];
+    const pt=(a,r)=>({x:cx+r*Math.cos(a*Math.PI/180),y:cy+r*Math.sin(a*Math.PI/180)});
+    const grid=[.25,.5,.75,1].map(p=>{const ps=angles.map(a=>pt(a,maxR*p));return`<path d="${ps.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ')} Z" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>`;}).join('');
+    const axes=angles.map(a=>{const p=pt(a,maxR);return`<line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="rgba(255,255,255,.08)" stroke-width="1"/>`;}).join('');
+    const dpts=dims.map((d,i)=>pt(angles[i],maxR*(s[d]/10)));
+    const dpath=dpts.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ')+' Z';
+    const lbls=labels.map((l,i)=>{const p=pt(angles[i],maxR+26);return`<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="rgba(251,249,245,.5)" font-size="9" font-family="Inter,sans-serif">${l}</text>`;}).join('');
+    const dots=dims.map((d,i)=>{const p=pt(angles[i],maxR*(s[d]/10));return`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${color}"/><text x="${p.x.toFixed(1)}" y="${(p.y-11).toFixed(1)}" text-anchor="middle" fill="${color}" font-size="10" font-weight="600" font-family="JetBrains Mono,monospace">${s[d]}</text>`;}).join('');
+    return`<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:280px;display:block;">${grid}${axes}<path d="${dpath}" fill="${color.replace(')',',0.15)').replace('rgb','rgba')}" stroke="${color}" stroke-width="2"/>${dots}${lbls}</svg>`;
+}
+
+/* ═══════════════════════════════════════
+   RENDER RESULTS
+   ═══════════════════════════════════════ */
+function renderResults() {
+    const s = score();
+    const c = COLORS[s.cls];
+    const r = t().res;
+    const cls = t().cls[s.cls];
+
+    setText('res-eye',r.eye); setText('res-head',r.head);
+    document.getElementById('classEmoji').textContent = cls.emoji;
+    document.getElementById('classEyebrow').textContent = r.eyebrow;
+    document.getElementById('classLabel').textContent = cls.label;
+    document.getElementById('classLabel').style.color = c;
+    document.getElementById('classScore').textContent = `${cls.desc}${s.total}/50`;
+    document.getElementById('classScore').style.color = c;
+    const banner = document.getElementById('classBanner');
+    banner.style.background = BGCOLS[s.cls];
+    banner.style.border = `1px solid ${c}40`;
+
+    setText('radar-title',r.radarTitle);
+    document.getElementById('radarChart').innerHTML = buildRadar(s,c);
+    setText('dims-title',r.dimsTitle);
+    setText('dn-icp',r.dn.icp); setText('dn-pain',r.dn.pain); setText('dn-fit',r.dn.fit); setText('dn-com',r.dn.com); setText('dn-open',r.dn.open);
+    setTimeout(()=>{
+        [['icp','ds-icp','db-icp'],['pain','ds-pain','db-pain'],['fit','ds-fit','db-fit'],['com','ds-com','db-com'],['open','ds-open','db-open']].forEach(([k,si,bi])=>{
+            setText(si,`${s[k]}/10`);
+            const bar = document.getElementById(bi);
+            bar.style.width = `${s[k]*10}%`;
+            bar.style.background = `linear-gradient(90deg,${c}99,${c})`;
+        });
+    },200);
+
+    setText('ins-title',r.insTitle);
+    const ins = insights(s);
+    document.getElementById('insightsList').innerHTML = ins.length
+        ? ins.map(i=>`<div class="insight-item"><span class="insight-icon">${i.icon}</span><span>${i.txt}</span></div>`).join('')
+        : '<div class="insight-item"><span>—</span></div>';
+
+    setText('send-title',r.sendTitle); setText('send-sub',r.sendSub);
+    setText('send-wa-label',r.sendWa); setText('send-email-label',r.sendEmail);
+    setText('btn-copy',r.copy); setText('restart-btn',r.restart); setText('resp-toggle-btn',r.respToggle);
+
+    buildRespTable();
+    saveResp(s);
+}
+
+/* ═══════════════════════════════════════
+   SEND FUNCTIONS
+   ═══════════════════════════════════════ */
+function buildMsg() {
+    const s = score();
+    const cls = t().cls[s.cls];
+    const lc = lang === 'es' ? 'es-ES' : 'en-GB';
+    const lines = [
+        lang==='es' ? `🏛️ *CUESTIONARIO HomAssets*` : `🏛️ *HomAssets Survey*`,
+        `📅 ${new Date().toLocaleDateString(lc)}`,
+        ``,
+        `*${lang==='es'?'Clasificación':'Classification'}: ${cls.emoji} ${cls.label} (${s.total}/50)*`,
+        `ICP: ${s.icp}/10 | ${lang==='es'?'Dolor':'Pain'}: ${s.pain}/10 | ${lang==='es'?'Adopción':'Adoption'}: ${s.fit}/10 | ${lang==='es'?'Comercial':'Commercial'}: ${s.com}/10 | ${lang==='es'?'Apertura':'Openness'}: ${s.open}/10`,
+        ``,
+        lang==='es'?`*RESPUESTAS:*`:`*RESPONSES:*`,
+        `👤 ${t().qlabels.q1}: ${A.q1||'—'}`,
+        `💼 ${t().qlabels.q2}: ${A.q2||'—'}`,
+        `🌍 ${t().qlabels.q3}: ${A.q3||'—'}`,
+        `💰 ${t().qlabels.q4}: ${A.q4||'—'}`,
+        `🏛️ ${t().qlabels.q5}: ${(A.q5||[]).join(', ')||'—'}`,
+        `📋 ${t().qlabels.q6}: ${A.q6||'—'}`,
+        `✅ ${t().qlabels.q12}: ${A.q12||'—'}`,
+        `💳 ${t().qlabels.q15}: ${A.q15||'—'} | ${t().qlabels.q16}: ${A.q16||'—'} | ${t().qlabels.q17}: ${A.q17||'—'}`,
+        `🔐 ${t().qlabels.q18}: ${A.q18||'—'}`,
+        A.q8  ? `\n⚠️ ${t().qlabels.q8}: ${A.q8}`  : '',
+        A.q13 ? `\n💡 ${t().qlabels.q13}: ${A.q13}` : '',
+        A.q21 ? `\n✍️ ${t().qlabels.q21}: ${A.q21}` : '',
+    ].filter(l=>l!=='').join('\n');
+    return lines;
+}
+
+function sendWhatsApp() {
+    window.open(`https://wa.me/34669446459?text=${encodeURIComponent(buildMsg())}`, '_blank');
+    showToast(t().toastWa);
+}
+
+function sendEmail() {
+    const s = score();
+    const cls = t().cls[s.cls];
+    const subj = encodeURIComponent(`HomAssets: ${cls.emoji} ${cls.label} (${s.total}/50)`);
+    const body = encodeURIComponent(buildMsg().replace(/\*/g,''));
+    window.location.href = `mailto:jvallesosborne@gmail.com?subject=${subj}&body=${body}`;
+    showToast(t().toastEmail);
+}
+
+function downloadCSV() {
+    const s = score();
+    const esc = v => { const str = Array.isArray(v)?v.join(' | '):String(v??''); return '"'+str.replace(/"/g,'""')+'"'; };
+    const keys = Object.keys(t().qlabels);
+    const header = [...keys.map(k=>t().qlabels[k]),'Score ICP','Score Pain','Score Fit','Score Com','Score Open','Total','Classification'].map(h=>`"${h}"`).join(',');
+    const row = [...keys.map(k=>esc(A[k])),...[s.icp,s.pain,s.fit,s.com,s.open,s.total,t().cls[s.cls].label].map(esc)].join(',');
+    const blob = new Blob(['\uFEFF'+header+'\n'+row],{type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=`homassets_${lang}_${Date.now()}.csv`; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showToast(t().toastCSV);
+}
+
+function copyText() {
+    const s = score();
+    const txt = Object.entries(t().qlabels).map(([k,l])=>{const v=A[k];if(!v&&v!==0)return null;const d=Array.isArray(v)?v.join(', '):v;return`${l}: ${d}`;}).filter(Boolean).join('\n');
+    navigator.clipboard?.writeText(txt).then(()=>showToast(t().toastCopy)).catch(()=>{});
+}
+
+/* ═══════════════════════════════════════
+   RESPONSE TABLE
+   ═══════════════════════════════════════ */
+function buildRespTable() {
+    document.getElementById('respTable').innerHTML = Object.entries(t().qlabels).map(([k,l])=>{
+        const v=A[k]; if(!v&&v!==0) return '';
+        const d=Array.isArray(v)?v.join(', '):v;
+        return `<tr><td>${l}</td><td>${d}</td></tr>`;
+    }).join('');
+}
+
+function toggleResp() {
+    const t_ = document.getElementById('respTable');
+    const b = document.getElementById('resp-toggle-btn');
+    t_.classList.toggle('show');
+    b.textContent = t_.classList.contains('show') ? t().res.respHide : t().res.respToggle;
+}
+
+/* ═══════════════════════════════════════
+   STORAGE
+   ═══════════════════════════════════════ */
+function saveResp(s) {
+    const all = loadAll();
+    all.push({ts:new Date().toISOString(),lang,answers:{...A},scores:s,cls:s.cls});
+    try { localStorage.setItem(SK,JSON.stringify(all)); } catch(e){}
+}
+function loadAll() { try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch{return[];} }
+
+/* ═══════════════════════════════════════
+   ADMIN (tap logo 3x)
+   ═══════════════════════════════════════ */
+let taps=0,tapT;
+document.getElementById('logo-tap')?.addEventListener('click',()=>{
+    taps++; clearTimeout(tapT); tapT=setTimeout(()=>taps=0,1500);
+    if(taps>=3){taps=0;openAdmin();}
+});
+
+function openAdmin(){
+    const all=loadAll();
+    const bc={ideal:0,hot:0,warm:0,cold:0};
+    const tot=all.reduce((s,r)=>s+(r.scores?.total||0),0);
+    all.forEach(r=>{if(r.cls)bc[r.cls]++;});
+    document.getElementById('adm-stats').innerHTML=`
+        <div class="adm-stat"><div class="adm-num">${all.length}</div><div class="adm-lbl">Total</div></div>
+        <div class="adm-stat"><div class="adm-num">${all.length?(tot/all.length).toFixed(1):0}</div><div class="adm-lbl">Avg Score</div></div>
+        <div class="adm-stat"><div class="adm-num">${bc.ideal+bc.hot}</div><div class="adm-lbl">Hot Leads</div></div>`;
+    const clsL={ideal:'⭐ Ideal',hot:'🔥 Hot',warm:'🌡️ Warm',cold:'❄️ Cold'};
+    const maxC=Math.max(1,...Object.values(bc));
+    document.getElementById('adm-dist').innerHTML='<div class="adm-dist-title">Distribution</div>'+
+        Object.entries(bc).map(([k,c])=>`<div class="adm-dr"><span class="adm-dl">${clsL[k]}</span><div class="adm-dbw"><div class="adm-db" style="width:${(c/maxC*100).toFixed(0)}%;background:${COLORS[k]};"></div></div><span class="adm-dc">${c}</span></div>`).join('');
+    document.getElementById('adminPanel').classList.add('show');
+}
+function closeAdmin(){document.getElementById('adminPanel').classList.remove('show');}
+function dlAll(){
+    const all=loadAll();
+    if(!all.length){showToast('No data');return;}
+    const esc=v=>{const str=Array.isArray(v)?v.join(' | '):String(v??'');return'"'+str.replace(/"/g,'""')+'"';};
+    const h=['Timestamp','Lang','Age','Profession','Country','Wealth','Assets','Inventory','Store','Challenge','Concern','Scenario','Problems','UseIt','Feature','Distrust','Pay','Model','Price','Privacy','Trust','Mode','Vision','ICP','Pain','Fit','Com','Open','Total','Class'].map(x=>`"${x}"`).join(',');
+    const rows=all.map(r=>[r.ts,r.lang,...['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q15','q16','q17','q18','q19','q20','q21'].map(k=>esc(r.answers?.[k])),r.scores?.icp,r.scores?.pain,r.scores?.fit,r.scores?.com,r.scores?.open,r.scores?.total,r.cls].map(esc).join(',')).join('\n');
+    const blob=new Blob(['\uFEFF'+h+'\n'+rows],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=`homassets_all_${Date.now()}.csv`;a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function clearAll(){if(!confirm('Delete all data?'))return;localStorage.removeItem(SK);closeAdmin();}
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════ */
+let cur = 'lang';
+
+function setLang(l) {
+    lang = l;
+    document.documentElement.lang = l;
+    buildAllUI();
+    goTo('cover');
+}
+
+function backToLang() { goTo('lang'); }
+
+function goTo(view) {
+    document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
+    const el = document.getElementById('sc-'+view);
+    if (el) el.classList.add('active');
+    cur = view;
+
+    const showProg = !['lang','cover','results'].includes(view);
+    document.getElementById('pw').style.display = showProg ? 'block' : 'none';
+    if (showProg) updateProg(parseInt(view));
+
+    window.scrollTo({top:0,behavior:'smooth'});
+
+    if (view === 'results') setTimeout(renderResults, 80);
+}
+
+function next(from, to, req) {
+    collectText(from);
+    for (const id of req) {
+        const v = A[id];
+        if (!v || (Array.isArray(v)&&!v.length) || v==='') { showToast(t().err, true); return; }
+    }
+    goTo(to);
+}
+
+function finalize() { collectText(7); goTo('results'); }
+
+function restart() {
+    Object.keys(A).forEach(k=>delete A[k]);
+    document.querySelectorAll('.oc').forEach(c=>c.classList.remove('selected'));
+    document.querySelectorAll('.ti').forEach(i=>i.value='');
+    goTo('lang');
+}
+
+function updateProg(n) {
+    for (let i=1;i<=7;i++){
+        const el=document.getElementById('ps'+i);
+        if(!el) continue;
+        el.classList.remove('active','done');
+        if(i<n) el.classList.add('done');
+        else if(i===n) el.classList.add('active');
+    }
+    document.getElementById('plabel').textContent = `${t().progLabel} ${n} ${t().of} 7`;
+}
+
+/* ═══════════════════════════════════════
+   OPTION CARDS
+   ═══════════════════════════════════════ */
+function sel(card) {
+    const q=card.dataset.q;
+    document.querySelectorAll(`[data-q="${q}"]`).forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    A[q]=card.dataset.val;
+}
+function chk(card) {
+    const q=card.dataset.q;
+    if(!A[q]) A[q]=[];
+    card.classList.toggle('selected');
+    const v=card.dataset.val;
+    card.classList.contains('selected') ? (!A[q].includes(v)&&A[q].push(v)) : (A[q]=A[q].filter(x=>x!==v));
+}
+function collectText(s) {
+    const map={1:['q1','q2','q3'],3:['q8','q9','q10'],4:['q13','q14'],7:['q21']};
+    (map[s]||[]).forEach(id=>{const el=document.getElementById(id);if(el)A[id]=el.value.trim();});
+}
+
+/* ═══════════════════════════════════════
+   BUILD UI FROM T()
+   ═══════════════════════════════════════ */
+function setText(id,txt){const el=document.getElementById(id);if(el)el.textContent=txt||'';}
+function setPlaceholder(id,txt){const el=document.getElementById(id);if(el)el.placeholder=txt||'';}
+
+function makeOpts(containerId, q, opts, multi) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = opts.map(v=>`
+        <div class="oc${multi?' multi':''}" data-q="${q}" data-val="${v}" onclick="${multi?'chk':'sel'}(this)">
+            <div class="oi"></div><span class="ot">${v}</span>
+        </div>`).join('');
+}
+
+function buildAllUI() {
+    const T_ = t();
+    // Cover
+    setText('c-badge', T_.badge);
+    const titleParts = T_.title.split('\n');
+    document.getElementById('c-title').innerHTML = titleParts[0]+'<br><span class="gold">'+titleParts[1]+'</span>';
+    setText('c-sub', T_.sub);
+    setText('c-sl', T_.sl); setText('c-ql', T_.ql); setText('c-ml', T_.ml);
+    setText('c-start', T_.start); setText('c-back', T_.back);
+
+    // S1
+    const s1=T_.s1;
+    setText('s1-eye',s1.eye);setText('s1-head',s1.head);setText('s1-desc',s1.desc);
+    setText('s1-q1n',s1.q1n);setText('s1-q1t',s1.q1t);setPlaceholder('q1',s1.q1p);
+    setText('s1-q2n',s1.q2n);setText('s1-q2t',s1.q2t);setPlaceholder('q2',s1.q2p);
+    setText('s1-q3n',s1.q3n);setText('s1-q3t',s1.q3t);setPlaceholder('q3',s1.q3p);
+    setText('s1-q4n',s1.q4n);setText('s1-q4t',s1.q4t);
+    makeOpts('q4-opts','q4',s1.q4o,false);
+
+    // S2
+    const s2=T_.s2;
+    setText('s2-eye',s2.eye);setText('s2-head',s2.head);setText('s2-desc',s2.desc);
+    setText('s2-q5n',s2.q5n);setText('s2-q5t',s2.q5t);makeOpts('q5-opts','q5',s2.q5o,true);
+    setText('s2-q6n',s2.q6n);setText('s2-q6t',s2.q6t);makeOpts('q6-opts','q6',s2.q6o,false);
+    setText('s2-q7n',s2.q7n);setText('s2-q7t',s2.q7t);makeOpts('q7-opts','q7',s2.q7o,true);
+    setText('btn-s2p',T_.btn.prev);setText('btn-s2n',T_.btn.next);
+
+    // S3
+    const s3=T_.s3;
+    setText('s3-eye',s3.eye);setText('s3-head',s3.head);setText('s3-desc',s3.desc);
+    setText('s3-q8n',s3.q8n);setText('s3-q8t',s3.q8t);setPlaceholder('q8',s3.q8p);
+    setText('s3-q9n',s3.q9n);setText('s3-q9t',s3.q9t);setPlaceholder('q9',s3.q9p);
+    setText('s3-q10n',s3.q10n);setText('s3-q10t',s3.q10t);setPlaceholder('q10',s3.q10p);
+    setText('s3-q11n',s3.q11n);setText('s3-q11t',s3.q11t);makeOpts('q11-opts','q11',s3.q11o,true);
+    setText('btn-s3p',T_.btn.prev);setText('btn-s3n',T_.btn.next);
+
+    // S4
+    const s4=T_.s4;
+    setText('s4-eye',s4.eye);setText('s4-head',s4.head);setText('s4-desc',s4.desc);
+    setText('s4-q12n',s4.q12n);
+    document.getElementById('s4-q12t').innerHTML = (s4.q12t||'').replace(' *','') + ' <span class="rs">*</span>';
+    document.getElementById('s4-hbox').innerHTML = `<ul>${s4.hbox.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+    const q12label = document.createElement('div');
+    q12label.className='q-text';q12label.style.marginBottom='12px';q12label.textContent=s4.q12label;
+    const hboxEl = document.getElementById('s4-hbox');
+    const existingLabel = hboxEl.nextElementSibling;
+    if (existingLabel && existingLabel.className==='q-text') existingLabel.remove();
+    hboxEl.insertAdjacentElement('afterend', q12label);
+    makeOpts('q12-opts','q12',s4.q12o,false);
+    setText('s4-q13n',s4.q13n);setText('s4-q13t',s4.q13t);setPlaceholder('q13',s4.q13p);
+    setText('s4-q14n',s4.q14n);setText('s4-q14t',s4.q14t);setPlaceholder('q14',s4.q14p);
+    setText('btn-s4p',T_.btn.prev);setText('btn-s4n',T_.btn.next);
+
+    // S5
+    const s5=T_.s5;
+    setText('s5-eye',s5.eye);setText('s5-head',s5.head);setText('s5-desc',s5.desc);
+    setText('s5-q15n',s5.q15n);setText('s5-q15t',s5.q15t);makeOpts('q15-opts','q15',s5.q15o,false);
+    setText('s5-q16n',s5.q16n);setText('s5-q16t',s5.q16t);makeOpts('q16-opts','q16',s5.q16o,false);
+    setText('s5-q17n',s5.q17n);setText('s5-q17t',s5.q17t);makeOpts('q17-opts','q17',s5.q17o,false);
+    setText('btn-s5p',T_.btn.prev);setText('btn-s5n',T_.btn.next);
+
+    // S6
+    const s6=T_.s6;
+    setText('s6-eye',s6.eye);setText('s6-head',s6.head);setText('s6-desc',s6.desc);
+    setText('s6-q18n',s6.q18n);setText('s6-q18t',s6.q18t);makeOpts('q18-opts','q18',s6.q18o,false);
+    setText('s6-q19n',s6.q19n);setText('s6-q19t',s6.q19t);makeOpts('q19-opts','q19',s6.q19o,true);
+    setText('s6-q20n',s6.q20n);setText('s6-q20t',s6.q20t);makeOpts('q20-opts','q20',s6.q20o,false);
+    setText('btn-s6p',T_.btn.prev);setText('btn-s6n',T_.btn.next);
+
+    // S7
+    const s7=T_.s7;
+    setText('s7-eye',s7.eye);setText('s7-head',s7.head);setText('s7-desc',s7.desc);
+    setText('s7-q21n',s7.q21n);setText('s7-q21t',s7.q21t);setPlaceholder('q21',s7.q21p);
+    setText('btn-s7p',T_.btn.prev);setText('btn-s7n',T_.btn.submit);
+
+    // Prev buttons s1
+    setText('btn-s1', T_.btn.next);
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════ */
+let toastT;
+function showToast(msg, err=false) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = err ? 'show err' : 'show';
+    clearTimeout(toastT);
+    toastT = setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════ */
+goTo('lang');
+</script>
+</body>
+</html>
